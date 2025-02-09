@@ -96,6 +96,7 @@ def submit_feedback():
         # Emit new feedback to all connected clients
         socketio.emit('new_feedback', feedback_data)
         
+        # Return the feedback as JSON to update the frontend without redirecting
         return jsonify({'success': True, 'feedback': feedback_data})
     except Exception as e:
         print(f"Error submitting feedback: {e}")
