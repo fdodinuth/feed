@@ -16,7 +16,7 @@
             --success-color: #22c55e;
         }
 
-        body {
+        body { 
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
@@ -190,72 +190,40 @@
     </div>
 
     <script>
-        // Initialize Socket.IO
         const socket = io();
-
         const form = document.getElementById('feedbackForm');
         const submitButton = document.getElementById('submitButton');
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
         const ratingText = document.querySelector('.rating-text');
 
-        // Update rating text when stars are selected
         document.querySelectorAll('input[name="rating"]').forEach(input => {
             input.addEventListener('change', (e) => {
-                const ratingTexts = {
-                    '5': 'Excellent',
-                    '4': 'Very Good',
-                    '3': 'Good',
-                    '2': 'Fair',
-                    '1': 'Poor'
-                };
+                const ratingTexts = {'5': 'Excellent', '4': 'Very Good', '3': 'Good', '2': 'Fair', '1': 'Poor'};
                 ratingText.textContent = ratingTexts[e.target.value];
             });
         });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // Disable submit button and hide messages
             submitButton.disabled = true;
             successMessage.style.display = 'none';
             errorMessage.style.display = 'none';
-            
             const formData = new FormData(form);
-            
             try {
-                const response = await fetch('/submit_feedback', {
-                    method: 'POST',
-                    body: formData
-                });
-                
+                const response = await fetch('/submit_feedback', { method: 'POST', body: formData });
                 if (response.ok) {
                     successMessage.style.display = 'block';
                     form.reset();
                     ratingText.textContent = 'Select your rating';
-                    
-                    // Redirect to dashboard after 2 seconds
-                    setTimeout(() => {
-                        window.location.href = '/dashboard';
-                    }, 2000);
                 } else {
                     throw new Error('Failed to submit feedback');
                 }
             } catch (error) {
-                console.error('Error:', error);
                 errorMessage.style.display = 'block';
             } finally {
                 submitButton.disabled = false;
             }
-        });
-
-        // Socket.IO event handlers
-        socket.on('connect', () => {
-            console.log('Connected to server');
-        });
-
-        socket.on('connect_error', (error) => {
-            console.error('Connection error:', error);
         });
     </script>
 </body>
